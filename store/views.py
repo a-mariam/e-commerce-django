@@ -1,8 +1,11 @@
 from django.shortcuts import render
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from django.http import HttpRequest
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+
 from .serializers import  ProductSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -40,32 +43,62 @@ from .models import Product
 
 
 # Using oop concept which
-class ProductList(APIView):
-    def get(self, request):
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return Response(status=status.HTTP_200_OK,data=serializer.data)
+# using class base view
+# class ProductList(APIView):
+#     def get(self, request):
+#         products = Product.objects.all()
+#         serializer = ProductSerializer(products, many=True)
+#         return Response(status=status.HTTP_200_OK,data=serializer.data)
+#
+#     def post(self, request):
+#         serializer = ProductSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(status=status.HTTP_201_CREATED, data= serializer.data)
 
-    def post(self, request):
-        serializer = ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED, data= serializer.data)
+
+# class ProductDetails(APIView):
+#     def get(self, request, pk):
+#         product = get_object_or_404(Product, pk=pk)
+#         serializer = ProductSerializer(product)
+#         return Response(serializer.data)
+#
+#     def put(self, request, pk):
+#         product = get_object_or_404(Product, pk=pk)
+#         serializer = ProductSerializer(product, data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#
+#     def delete(self, request, pk):
+#         product = get_object_or_404(Product, pk=pk)
+#         product.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProductDetails(APIView):
-    def get(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
+# using generic that means extending a clas
+#  class ProductList(ListCreateAPIView):
+#      def get_queryset(self):
+#          return Product.objects.all()
+#
+#      def get_serializer_class(self):
+#          return  ProductSerializer
+#
+#
+# class ProductDetail(RetrieveUpdateDestroyAPIView):
+#      def get_queryset(self):
+#          return Product.objects.all()
+#
 
-    def put(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        serializer = ProductSerializer(product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+class ProductList(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-    def delete(self, request, pk):
-        product = get_object_or_404(Product, pk=pk)
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ProductDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+

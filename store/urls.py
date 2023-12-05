@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from store import views
 #   function base
@@ -7,8 +8,11 @@ from store import views
 #     path('products/<int:pk>/', views.product_details)
 # ]
 
+router = DefaultRouter()
+router.register('product', views.ProductViewSet, basename='products')
+
 
 urlpatterns = [
     path('products/', views.ProductList.as_view()),
-    path('products/<int:pk>/', views.ProductDetails.as_view())
+    path('products/<int:pk>/', views.ProductDetail.as_view())
 ]

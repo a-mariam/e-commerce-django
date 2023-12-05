@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.http import HttpRequest
 from rest_framework.decorators import api_view
@@ -88,17 +89,22 @@ from .models import Product
 #      def get_queryset(self):
 #          return Product.objects.all()
 #
+#
+# class ProductList(ListCreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#
+#
+# class ProductDetail(RetrieveUpdateDestroyAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
-class ProductList(ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-class ProductDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
 
 class ProductViewSet(ModelViewSet):
+    pagination_class = PageNumberPagination
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+def get_serializer_context(self):
+       return {'request': self.request}
 
